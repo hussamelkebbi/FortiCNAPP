@@ -1,0 +1,27 @@
+### GCP authentication troubleshooting
+
+Cloud Shell normally authenticates Terraform automatically. These steps are only needed if authentication fails, for example:
+
+`oauth2/google: invalid token JSON from metadata: EOF`
+
+Authenticate using your authorized deployment administrator:
+
+```bash
+gcloud auth login admin@x.com
+gcloud config set account admin@x.com
+```
+
+Supply Terraform a temporary access token without printing it:
+
+```bash
+export GOOGLE_OAUTH_ACCESS_TOKEN="$(gcloud auth print-access-token \
+  --account=admin@xc.com)"
+```
+
+Retry Terraform from the original deployment directory, keeping its existing state. Afterward, clear the token:
+
+```bash
+unset GOOGLE_OAUTH_ACCESS_TOKEN
+```
+
+The token expires; regenerate it if needed. Never share or commit it.
